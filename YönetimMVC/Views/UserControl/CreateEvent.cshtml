@@ -1,0 +1,157 @@
+﻿@{
+    Layout = null;
+}
+
+<html>
+
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+<body>
+    <main class="form-signin">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+
+                <h1 class="h3 mb-3 fw-normal">Create Event</h1>
+
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="Name" >
+                    <label for="floatingInput">Name</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="EventDate">
+                    <label for="floatingInput">EventDate</label>
+                </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="ApplicationDeadline">
+                        <label for="floatingInput">ApplicationDeadline</label>
+                    </div>
+                
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="Capacity">
+                        <label for="floatingInput">Capacity</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="Participants">
+                        <label for="floatingInput">Participants</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="Address">
+                        <label for="floatingInput">Address</label>
+                    </div>
+                <div class="btn-group dropup">
+
+                    <label for="categoryName">Category: </label>
+                    <select id="categoryName">
+                        <option value="">Seçiniz</option>
+                    </select>
+                    <br>
+                    </div>
+                <div class="btn-group dropup">
+
+                    <label for="cityName">City: </label>
+                    <select id="cityName">
+                        <option value=""> Seçiniz</option>
+                    </select>
+                    <br>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="Description">
+                        <label for="floatingInput">Description</label>
+                    </div>
+              
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="EventPayment">
+                        <label for="floatingInput">EventPayment</label>
+                    </div>
+
+                    <div class="form-check">
+                        <label class ="form-check-label" for="IsTicketed">Is Ticket</label>
+                        <input class="form-check-input" type="checkbox" id="IsTicketed">
+
+                    </div>
+                    <div>
+                        <button id="btnGonder" type="submit" class="w-100 btn btn-lg btn-primary">Create</button>
+                    </div>
+                
+                </div>
+            </div>
+        </main>
+
+
+    </body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+<script>
+
+    $(document).ready(function () {
+        populateDropdown('#categoryName', 'GetCategory');
+        populateDropdown('#cityName', 'GetCity');
+
+        var userToken = localStorage.getItem("access_token");
+        $("#btnGonder").click(function () {
+            var isTicketed = $("#IsTicketed").is(":checked");
+            var vm = {
+                Name: $("#Name").val(),
+                EventDate: $("#EventDate").val(),
+                ApplicationDeadline: $("#ApplicationDeadline").val(),
+                Participants: $("#Participants").val(),
+                Capacity: $("#Capacity").val(),
+                Address: $("#Address").val(),
+                Description: $("#Description").val(),
+                IsTicketed: isTicketed,
+                EventPayment: $("#EventPayment").val(),
+                CategoryName: $("#categoryName option:selected").text(),
+                CityName: $("#cityName option:selected").text()
+            };
+
+            var jss = JSON.stringify(vm);
+            $.ajax({
+                url: "http://localhost:17590/api/User/CreateEvent",
+                data: jss,
+                type: "POST",
+                contentType: "application/json",
+                dataType: "text",
+                headers: {
+                    'Authorization': 'Bearer ' + userToken
+                },
+                success: function (data) {
+                    console.log(data);
+                    localStorage.setItem("access_token", userToken);
+                    window.location.href = "/UserControl/EventList";
+                }
+            });
+
+        });
+    });
+
+    function populateDropdown(elementId, endpoint) {
+        $.ajax({
+            url: `http://localhost:17590/api/User/${endpoint}`,
+            method: "GET",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+                var dropdown = $(elementId);
+                dropdown.empty(); // Önceki seçenekleri temizle
+
+                dropdown.append($('<option>', {
+                    value: "",
+                    text: "Choose"
+                }));
+
+                $.each(data, function (index, value) {
+                    dropdown.append($('<option>', {
+                        value: index,
+                        text: value.Name
+                    }));
+                });
+            }
+        });
+    }
+
+</script>
+</html>

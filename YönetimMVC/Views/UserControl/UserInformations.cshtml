@@ -1,0 +1,124 @@
+﻿@model EtkinlikYönetimProjesi.Model.User
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <title>User List</title>
+</head>
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+<body>
+    <main class="form-signin">
+    <form>
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+
+                <h1 class="h3 mb-3 fw-normal">User Information</h1>
+                <div form-floating>
+                    <label for="userId">ID:</label>
+                    <input type="text" id="userId" class="form-control" disabled>
+                </div>
+                <div form-floating>
+            <label for="userName">Name:</label>
+                        <input type="text" id="userName" class="form-control" disabled>
+        </div>
+                <div form-floating>
+            <label for="userLastName">Last Name:</label>
+                        <input type="text" id="userLastName" class="form-control" disabled>
+        </div>
+                <div form-floating>
+            <label for="userEmail">Email:</label>
+                        <input type="text" id="userEmail" class="form-control" disabled>
+        </div>
+                <div form-floating>
+            <label for="userRole">User Role:</label>
+                        <input type="text" id="userRole" class="form-control" disabled>
+        </div>
+                <div form-floating>
+                        <label for="Password">Password:</label>
+                        <input type="text" id="Password" class="form-control">
+        </div>
+
+                    <div form-floating>
+                        <label for="PasswordRepeat">Password repeat:</label>
+                        <input type="text" id="PasswordRepeat" class="form-control">
+                    </div>
+        <div>
+                        <div>
+                            <button id="btnGonder" type="submit" class="w-100 btn btn-lg btn-primary">Password Update</button>
+                        </div>
+        </div>
+                    
+            </div>
+        </div>
+    </form>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            loadUsers();
+            $('#btnGonder').click(function () {
+                updateUser();
+            });
+        });
+
+        function loadUsers() {
+            var userToken = localStorage.getItem("access_token");                   
+            $.ajax({
+                url: "http://localhost:17590/api/User/GetProfileInformation", // API URL'si
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + userToken
+                },
+                success: function (data) {
+                    fillUserData(data);
+                },
+                error: function () {
+                    alert('Bir hata oluştu.');
+                }
+            });
+        }
+        function fillUserData(user) {
+            $('#userId').val(user.ID);
+            $('#userName').val(user.FirstName);
+            $('#userLastName').val(user.LastName);
+            $('#userEmail').val(user.Email);
+            $('#userRole').val(user.UserRole);
+            $('#Password').val(user.Password);
+            $('#PasswordRepeat').val(user.PasswordRepeat);
+        }
+        function updateUser() {
+            var userToken = localStorage.getItem("access_token");
+            var vm = {
+                NewPassword: $("#Password").val(),
+                PasswordRepeat: $("#PasswordRepeat").val(),
+               
+                // Diğer alanları da ekleyin
+            };
+            
+            $.ajax({
+                url: "http://localhost:17590/api/User/JoinEventById", // Güncelleme API URL'si
+                method: 'Post',
+                contentType: "application/json",
+                dataType: "text",
+                headers: {
+                    'Authorization': 'Bearer ' + userToken,                   
+                },
+                data: JSON.stringify(vm),
+                success: function (data) {
+                    localStorage.setItem("access_token", userToken);
+                    window.location.href = "/UserControl/EventList";
+                },
+                error: function () {
+                    alert('Bir hata oluştu.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

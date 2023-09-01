@@ -1,0 +1,109 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+<body>
+    <main class="form-signin">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                <center><img class="center" src="~/lib/bootstrap-icons/icons/book.svg" alt="" width="350" height="357"></center>
+
+                <h1 class="h3 mb-3 fw-normal">Please Login</h1>
+
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="Email" placeholder="name@example.com">
+                    <label for="floatingInput">Email address</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="Password" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div>
+
+                <div class="checkbox mb-3">
+                   
+                </div>
+                <button id="btnGonder" type="submit" class="w-100 btn btn-lg btn-primary">Sign In</button>
+                <div class="checkbox mb-3">
+                </div>
+                <a href="/UserControl/Register/">
+                    <button id="btnGonder" type="submit" class="w-100 btn btn-lg btn-primary"> Register</button>
+                  </a>
+                   
+            </div>
+        </div>
+    </main>
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+<script>
+
+        $(document).ready(function () {
+            $("#btnGonder").click(function () {
+                var vm = {
+                    Email: $("#Email").val(),
+                    Password: $("#Password").val()
+
+                };
+
+                var jss = JSON.stringify(vm);
+
+                $.ajax({
+                    url: "http://localhost:17590/api/User/Login",
+                    data: jss,
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "text",
+                    crossDomain: true,
+                    success: function (userToken ) {
+                    if (userToken ) {
+                        
+                        localStorage.setItem("access_token", userToken);
+                            window.location.href = "/UserControl/EventList";
+
+                        
+
+
+                        //$.ajax({
+                        //    url: "http://localhost:17590/api/User/EventList",
+                        //    type: "GET",
+                        //    headers: headers,
+                        //    success: function (data) {
+                        //        var eventListDiv = $("#eventList");
+                        //        var events = data; // API'den gelen veriler
+
+                        //        // Verileri döngü ile div içerisine ekleyin
+                        //        for (var i = 0; i < events.length; i++) {
+                        //            eventListDiv.append("<p>" + events[i].Name + " - " + "</p>");
+                        //        }
+                        //    },
+                        //    error: function (error) {
+                        //        console.log(error);
+                        //    }
+                        //});
+                    }
+
+                }
+            });
+
+        });
+    });
+
+    function redirectToEventListPage() {
+
+    }
+</script>
+
+
+
+
+
+

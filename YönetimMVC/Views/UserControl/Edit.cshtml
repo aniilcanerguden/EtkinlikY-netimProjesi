@@ -1,0 +1,85 @@
+﻿@model EtkinlikYönetimProjesi.Dtos.EventUpdateViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+<body>
+    <main class="form-signin">
+        <div id="eventListContainer" class="container">
+            <div class="row">
+                <div class="col-md-4 offset-md-4">
+                  
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="Capacity" placeholder="Capacity">
+                        <label for="Capacity">Capacity</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="Address" placeholder="Address">
+                        <label for="Address">Address</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="IsCancelled">
+                        <label class="form-check-label" for="IsCancelled">Is Cancelled</label>
+                    </div>
+
+                    <div>
+                        <button id="btnGonder" class="w-100 btn btn-lg btn-primary" type="submit">Update Event</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+<script>
+
+    $(document).ready(function () {
+        var userToken = localStorage.getItem("access_token");
+        var eventId = localStorage.getItem("editEventId");
+        $("#btnGonder").click(function () {
+            
+            var isCancelled = $("#IsCancelled").is(":checked");
+            var vm = {
+                Id: eventId,
+                Capacity: $("#Capacity").val(),
+                Address: $("#Address").val(),
+                IsCancelled: isCancelled,
+            };
+              
+            var jss = JSON.stringify(vm);
+            $.ajax({
+
+                url: "http://localhost:17590/api/User/CancelEvent",
+                data: jss,
+                type: "Put",
+                contentType: "application/json",
+                dataType: "text",
+                headers: {
+                    'Authorization': 'Bearer ' + userToken
+                },
+                success: function (data) {
+                    console.log(data);
+                    localStorage.setItem("access_token", userToken);
+                    localStorage.removeItem("editEventId");
+                    window.location.href = "/UserControl/EventList";
+
+
+                }
+            });
+
+        });
+    });
+</script>

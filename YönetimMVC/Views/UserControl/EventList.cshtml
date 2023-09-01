@@ -1,0 +1,198 @@
+﻿@model EtkinlikYönetimProjesi.Dtos.EventListViewModel
+@{
+    Layout = null; // Sayfa düzeni kullanmayacağız
+}
+<html>
+<head>
+    <title>Event List</title>
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+</head>
+
+
+<body>
+    <div id="eventCards" class="card-container">
+
+        <button class="btn btn-primary" id="createEventButton">Etkinlik Oluştur</button>
+        <button class="btn btn-primary" id="getUser">Kullanıcı bilgileri</button>
+    </div>
+
+</body>
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        var userToken = localStorage.getItem("access_token");       
+        $.ajax({
+            url: "http://localhost:17590/api/User/EventList",
+            type: "GET",
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            },
+            success: function (userToken) {
+                console.log(userToken);
+                var eventList = userToken;
+                if (Array.isArray(eventList)) {
+                    populateEventTable(eventList);
+                    populateEvent(userToken);
+                    populateUser(eventList)
+                } else if (eventList.length !== undefined) { // Eğer uzunluğu tanımlıysa (nesne gibi görünüyor)
+                    populateEventTable([eventList]);
+                    populateEvent([userToken]);// Diziye çevirerek tabloya doldur
+                    populateUser([eventList]);
+                } else {
+                    console.error("API'den dönen veri anlaşılamadı.");
+                }
+               
+            },
+            error: function (error) {
+                console.log(error);
+            }
+            
+        });
+    });
+   
+    function populateEventTable(eventList) {
+        var cardContainer = $("#eventCards");
+
+        // API'den gelen veriyi tabloya ekleyin
+        eventList.forEach(function (event) {
+            var card = `
+             <div class="card-container">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-main">
+                            <h5 class="card-title">
+                                <h6 class="text-blue mt-2">
+                                        <h3>${event.Name}</h3>
+                                </h6>
+                            </h5>
+                            <p class="card-title">
+                                    <strong>ID:</strong> ${event.Id}<br />
+                                    <strong>Event Date:</strong> ${event.EventDate}<br />
+                                    <strong>Address:</strong>${event.Address}<br />
+                                    <strong>Application Deadline:</strong>${event.ApplicationDeadline}<br />
+                                    <strong>Is Approved:</strong> ${event.IsApproved ? 'Approved' : 'Not Approved'}<br />
+                            </p>
+                            <i class="fas fa-edit">
+                                     <button class="btn btn-primary" data-id="${event.Id}" onclick="cancelEvent(${event.Id}, '${eventList}')">Cancel Event</button></i>
+                            <i class="fas fa-trash">
+                                         <button class="btn btn-primary" data-id="${event.Id}" onclick="editEvent(${event.Id}, '${eventList}')">Update Event</button></i>
+                            <i class="fas fa-edit">
+
+                                                         <input type="checkbox" id="IsTicketed" data-id="${event.Id}" onclick="joinEvent(${event.Id})">Join Event</button></i>
+                                    </label>
+                            </i>
+                        </div>
+                    </div>
+                </div>
+        
+        </div>
+    </div>
+
+                    
+            `;
+            cardContainer.append(card);
+        });
+    }
+
+
+    function populateEvent(eventList) {
+   
+        $("#createEventButton").click(function () {
+            var userToken = eventList;
+            window.location.href = "/UserControl/CreateEvent";  // Yeni sayfaya yönlendir
+        });
+    }
+    function populateUser(eventList) {
+
+        $("#getUser").click(function () {
+            var userToken = eventList;
+            window.location.href = "/UserControl/UserInformations";  // Yeni sayfaya yönlendir
+        });
+    }
+</script>
+<script>
+        .card {
+        width: 200px;
+        display: flex;
+        flex - direction: column;
+        border: 1px solid #04ba77;
+        border - radius: 4px;
+        overflow: hidden;
+        margin: 5px;
+        box - shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+
+    }
+       .card-container {
+        padding: 2px 16px;
+        display: flex;
+        flex - direction: row; /* Yatayda yan yana listeleme */
+        flex - wrap: wrap;
+    }
+
+     
+        .card - title {
+        flex: 1;
+        margin - right: 20px;
+    }
+</script>
+
+<script>
+    function editEvent(idF, token) {
+        var userToken = token;
+        localStorage.setItem("editEventId", idF);
+        window.location.href = "/UserControl/Edit";
+    }
+    function cancelEvent(idF, token) {
+        var userToken = token;
+        localStorage.setItem("editEventId", idF);
+        window.location.href = "/UserControl/Cancel";
+    }
+    function joinEvent(idF) {
+        var userToken = localStorage.getItem("access_token");
+        
+        
+   
+        var vm = {
+            Id: idF,
+            IsTicketed: true
+        }
+        var jss = JSON.stringify(vm);
+        $.ajax({
+
+            url: "http://localhost:17590/api/User/JoinEventById",
+            data: jss,
+            type: "POST",
+            contentType: "application/json",
+            dataType: "text",          
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            },
+
+            success: function (data) {
+                console.log(data);
+                localStorage.setItem("access_token", userToken);
+                window.location.href = "/UserControl/GetJoiningEvent"; // Başarılı işlem olduğunda yönlendir
+            },
+            error: function () {
+                console.log("Bir hata oluştu.");
+            }
+
+            
+        });
+ 
+    }
+
+
+    
+</script>

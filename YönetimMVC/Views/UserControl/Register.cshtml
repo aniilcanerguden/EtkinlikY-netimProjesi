@@ -1,0 +1,92 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+<body>
+    <main class="form-signin">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+
+                <h1 class="h3 mb-3 fw-normal">Please Register</h1>
+
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="Email" placeholder="name@example.com">
+                    <label for="floatingInput">Email address</label>
+                </div>
+
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="FirstName">
+                    <label for="floatingInput">FirstName</label>
+                </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="LastName">
+                    <label for="floatingInput">LastName</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="Password" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="PasswordRepeat" placeholder="Password">
+                    <label for="floatingPassword">PasswordRepeat</label>
+                </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="Role">
+                    <label for="floatingInput">Role</label>
+                </div>
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" value="remember-me"> Remember me
+                    </label>
+                </div>
+
+                <button id="btnGonder" type="submit" class="w-100 btn btn-lg btn-primary"> Register</button>
+            </div>
+        </div>
+    </main>
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $("#btnGonder").click(function () {
+            var vm = {
+                Email: $("#Email").val(),
+                FirstName: $("#FirstName").val(),
+                LastName: $("#LastName").val(),
+                Password: $("#Password").val(),
+                PasswordRepeat: $("#PasswordRepeat").val(),
+                Role: $("#Role").val(),
+
+            };
+
+            var jss = JSON.stringify(vm);
+
+            $.ajax({
+                url: "http://localhost:17590/api/User/Register",
+                data: jss,
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+
+                success: function (user) {
+                    if (user != null) {
+                        window.location.href = "/UserControl/Login"
+                    }
+
+                }
+            });
+
+        });
+    });
+</script>

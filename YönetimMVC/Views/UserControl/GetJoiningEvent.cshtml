@@ -1,0 +1,141 @@
+﻿@model EtkinlikYönetimProjesi.Dtos.EventListViewModel
+@{
+    Layout = null; // Sayfa düzeni kullanmayacağız
+}
+<html>
+<head>
+    <title>Event List</title>
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="eventCards" class="card-body">
+        
+    </div>
+
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+        .card {
+        width: 150px;
+        display: flex;
+        flex - direction: column;
+        border: 1px solid #04ba77;
+        border - radius: 4px;
+        overflow: hidden;
+        margin: 5px;
+    }
+            .card - header {
+        color: #04ba77;
+        text - align: center;
+        font - size: 12px;
+        font - weight: 600;
+        border - bottom: 1px solid #04ba77;
+        background - color: #c2f3e1;
+        padding: 5px 10px;
+    }
+            .card - main {
+        display: flex;
+        flex - direction: column;
+        justify - content: center;
+        align - items: center;
+        padding: 15px 0;
+    }
+        .card - container {
+        display: flex;
+        flex - wrap: wrap;
+    }
+            .material - icons {
+        font - size: 36px;
+        color: #04ba77;
+        margin - bottom: 5px;
+    }
+</script>
+<script>
+
+    $(document).ready(function () {
+
+        var userToken = localStorage.getItem("access_token");
+        $.ajax({
+            url: "http://localhost:17590/api/User/JoinEventList",
+            type: "GET",
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            },
+            success: function (userToken) {
+                console.log(userToken);
+                var eventList = userToken;
+                if (Array.isArray(eventList)) {
+                    populateEventTable(eventList);
+                    
+                } else if (eventList.length !== undefined) { // Eğer uzunluğu tanımlıysa (nesne gibi görünüyor)
+                    populateEventTable([eventList]);
+                    
+                } else {
+                    console.error("API'den dönen veri anlaşılamadı.");
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+
+        });
+    });
+
+    function populateEventTable(eventList) {
+        var cardContainer = $("#eventCards");
+
+        // API'den gelen veriyi tabloya ekleyin
+        eventList.forEach(function (event) {
+            var card = `
+                      <div class="card-container">
+                   <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-main">
+                                <h5 class="card-title">
+                                    <h6 class="text-white mt-2">
+                                            <h3>${event.Name}</h3>
+                                    </h6>
+                                </h5>
+                                <p class="card-text">
+                                        <strong>ID:</strong> ${event.Id}<br />
+                                        <strong>Event Date:</strong> ${event.EventDate}<br />
+                                        <strong>Address:</strong>${event.Address}<br />
+                                        <strong>Application Deadline:</strong>${event.ApplicationDeadline}<br />
+                                        <strong>Is Approved:</strong> ${event.IsApproved}<br />
+                                                                                <strong>Companies:</strong> <br />
+                                        <ul>
+                                        ${event.Companies.map(function (company) {
+                return `<li>${company.Name} - <a href = "${normalizeUrl(company.WebsiteUrl)} target="_blank">${company.WebsiteUrl}</a></li>`;
+            }).join('')}
+                                        </ul>
+
+
+
+                                </p>
+                            
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+
+        </div>
+                `;
+            cardContainer.append(card);
+        });
+    }
+    function normalizeUrl(url) {
+
+        return "http://" + url; // veya "https://" + url;
+
+    }
+ </script>
