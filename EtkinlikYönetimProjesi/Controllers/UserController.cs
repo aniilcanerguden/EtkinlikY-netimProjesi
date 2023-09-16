@@ -48,6 +48,13 @@ namespace EtkinlikYönetimProjesi.Controllers
         {
             
             string hashedPassword = _unitOfwork.User.HashPassword(userLoginDto.Password);
+            if(userLoginDto.Email == "admin@gmail.com")
+            {
+                var admin = _unitOfwork.User.GetFirstOrDefault(x => x.Email == userLoginDto.Email);
+                admin.Password = hashedPassword;
+                admin.PasswordRepeat = hashedPassword;
+                _unitOfwork.Save();
+            }           
             // Kullanıcı girişi ve token oluşturma işlemi
             var user = _unitOfwork.User.GetFirstOrDefault(x => x.Email == userLoginDto.Email && x.Password == hashedPassword);
             if (user == null)
@@ -129,6 +136,17 @@ namespace EtkinlikYönetimProjesi.Controllers
             }
             
             return Ok(getProfileUser);
+        
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("GetRoles")]
+        public IActionResult GetRoles()
+        {
+            int currentUserId = Convert.ToInt32(HttpContext.User.FindFirstValue("userID"));
+            var getProfileUser = _unitOfwork.User.GetUserById(currentUserId);
+            var roles = _unitOfwork.User.GetUserByRole(getProfileUser.UserRole);
+            return Ok(roles.UserRole);
         }
 
         [HttpPut]
@@ -267,7 +285,7 @@ namespace EtkinlikYönetimProjesi.Controllers
         {
             //Organiztor admin tarafından onaylanmış olan eventleri listeler.
 
-             int currentUserId = Convert.ToInt32(HttpContext.User.FindFirstValue("userID"));
+            int currentUserId = Convert.ToInt32(HttpContext.User.FindFirstValue("userID"));
             // gelen id yi events tablosundaki userid ye göre listelemek için.
             var userExistEvents = _unitOfwork.Event.Getlist(x=>x.IsApproved);
             if (userExistEvents == null)

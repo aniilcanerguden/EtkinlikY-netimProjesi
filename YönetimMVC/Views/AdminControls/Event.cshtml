@@ -1,0 +1,194 @@
+﻿@{
+    Layout = null; // Sayfa düzeni kullanmayacağız
+}
+<html>
+<head>
+    <title>Event List</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+</head>
+
+
+<body>
+
+    <div class="card-title">
+        <button class="btn btn-primary" id="createEventButton">Category Oluştur</button>
+        <button class="btn btn-primary" id="getUser">Şehir Bilgileri gir</button>
+    </div>
+    <div>
+        <h2 class="card-title"> Admin Page</h2>
+    </div>
+    <div id="eventCards" class="card-container">
+    </div>
+
+</body>
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        var userToken = localStorage.getItem("access_token");
+        $.ajax({
+            url: "http://localhost:17590/api/Admin/GetEvents",
+            type: "GET",
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            },
+            success: function (userToken) {
+                console.log(userToken);
+                var eventList = userToken;
+                if (Array.isArray(eventList)) {
+                    populateEventTable(eventList);
+                    populateEvent(userToken);
+                    populateUser(eventList)
+                } else if (eventList.length !== undefined) { // Eğer uzunluğu tanımlıysa (nesne gibi görünüyor)
+                    populateEventTable([eventList]);
+                    populateEvent([userToken]);// Diziye çevirerek tabloya doldur
+                    populateUser([eventList]);
+                } else {
+                    console.error("API'den dönen veri anlaşılamadı.");
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+
+        });
+    });
+
+    function populateEventTable(eventList) {
+        var cardContainer = $("#eventCards");
+
+        // API'den gelen veriyi tabloya ekleyin
+        eventList.forEach(function (event) {
+            var card = `
+                 <div class="card-container">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-main">
+                                <h5 class="card-title">
+                                    <h6 class="text-blue mt-2">
+                                            <h3>${event.Name}</h3>
+                                    </h6>
+                                </h5>
+                                <p class="card-title">
+                                        <strong>ID:</strong> ${event.Id}<br />
+                                        <strong>Event Date:</strong> ${event.EventDate}<br />
+                                        <strong>Address:</strong>${event.Address}<br />
+                                        <strong>Application Deadline:</strong>${event.ApplicationDeadline}<br />
+                                        <strong>Is Approved:</strong> ${event.IsApproved ? 'Approved' : 'Not Approved'}<br />
+                                </p>
+                                <i class="fas fa-edit">
+                                         <button class="btn btn-primary" data-id="${event.Id}" onclick="ApproveEvent(${event.Id})">Approve Event</button></i>
+                                <i class="fas fa-trash">
+                                             <button class="btn btn-primary" data-id="${event.Id}" onclick="CancelEvent(${event.Id})">Cancel Event</button></i>
+                                <i class="fas fa-edit">
+
+                                     
+                                </i>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+
+
+                `;
+            cardContainer.append(card);
+        });
+    }
+
+
+</script>
+<style>
+    .card {
+        width: 380px;
+        display: flex;
+        flex-direction: column;
+        border: 3px solid #04ba77;
+        border-radius: 5px;
+        overflow: hidden;
+        margin: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+    }
+
+    .card-container {
+        padding: 2px 16px;
+        display: flex;
+        flex-direction: row; /* Yatayda yan yana listeleme */
+        flex-wrap: wrap;
+    }
+
+
+    .card-title {
+        flex: 1;
+        margin-right: 20px;
+    }
+</style>
+
+<script>
+ 
+    function ApproveEvent(idF) {
+        var userToken = localStorage.getItem("access_token");
+ 
+        $.ajax({
+
+            url: "http://localhost:17590/api/Admin/ApproveEvent/" + idF,
+            type: "Post",
+            contentType: "application/json",
+            dataType: "text",
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            },
+
+            success: function (data) {
+                console.log(data);
+                localStorage.setItem("access_token", userToken);
+                window.location.href = "/AdminControls/Event"; // Başarılı işlem olduğunda yönlendir
+            },
+            error: function () {
+                console.log("Bir hata oluştu.");
+            }
+
+
+        });
+
+    }
+    function CancelEvent(idF) {
+        var userToken = localStorage.getItem("access_token");
+
+        $.ajax({
+
+            url: "http://localhost:17590/api/Admin/RejectEvent/" + idF,
+            type: "Post",
+            contentType: "application/json",
+            dataType: "text",
+            headers: {
+                'Authorization': 'Bearer ' + userToken
+            },
+
+            success: function (data) {
+                console.log(data);
+                localStorage.setItem("access_token", userToken);
+                window.location.href = "/AdminControls/Event"; // Başarılı işlem olduğunda yönlendir
+            },
+            error: function () {
+                console.log("Bir hata oluştu.");
+            }
+
+
+        });
+
+    }
+
+
+</script>

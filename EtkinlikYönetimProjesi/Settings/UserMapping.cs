@@ -19,7 +19,8 @@ namespace EtkinlikYönetimProjesi.Settings
                 PasswordRepeat = "admin1234",
                 UserRole = "Admin"
                
-            });
-        }       
+            });          
+        }
+       
     }
 }

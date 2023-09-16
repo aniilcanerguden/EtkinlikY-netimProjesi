@@ -5,13 +5,15 @@
 <html>
 <head>
     <title>Event List</title>
-    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div id="eventCards" class="card-body">
+    <div>
+        <h2 class="card-title"> User Joining Events </h2>
+    </div>
+    <div id="eventCards" class="card-container">
         
     </div>
 
@@ -21,42 +23,32 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-        .card {
-        width: 150px;
+<style>
+    .card {
+        width: 380px;
         display: flex;
-        flex - direction: column;
-        border: 1px solid #04ba77;
-        border - radius: 4px;
+        flex-direction: column;
+        border: 3px solid #04ba77;
+        border-radius: 5px;
         overflow: hidden;
-        margin: 5px;
+        margin: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
     }
-            .card - header {
-        color: #04ba77;
-        text - align: center;
-        font - size: 12px;
-        font - weight: 600;
-        border - bottom: 1px solid #04ba77;
-        background - color: #c2f3e1;
-        padding: 5px 10px;
-    }
-            .card - main {
+
+    .card-container {
+        padding: 2px 16px;
         display: flex;
-        flex - direction: column;
-        justify - content: center;
-        align - items: center;
-        padding: 15px 0;
+        flex-direction: row; /* Yatayda yan yana listeleme */
+        flex-wrap: wrap;
     }
-        .card - container {
-        display: flex;
-        flex - wrap: wrap;
+
+
+    .card-title {
+        flex: 1;
+        margin-right: 20px;
     }
-            .material - icons {
-        font - size: 36px;
-        color: #04ba77;
-        margin - bottom: 5px;
-    }
-</script>
+</style>
 <script>
 
     $(document).ready(function () {
@@ -96,8 +88,7 @@
         eventList.forEach(function (event) {
             var card = `
                       <div class="card-container">
-                   <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card">
                             <div class="card-main">
                                 <h5 class="card-title">
@@ -105,7 +96,7 @@
                                             <h3>${event.Name}</h3>
                                     </h6>
                                 </h5>
-                                <p class="card-text">
+                                    <p class="card-title">
                                         <strong>ID:</strong> ${event.Id}<br />
                                         <strong>Event Date:</strong> ${event.EventDate}<br />
                                         <strong>Address:</strong>${event.Address}<br />
@@ -122,7 +113,6 @@
 
                                 </p>
                             
-                            </div>
                         </div>
                     </div>
 

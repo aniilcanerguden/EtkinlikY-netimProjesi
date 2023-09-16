@@ -18,5 +18,10 @@ namespace EtkinlikYönetimProjesi.IRepository
         {
             return _context.Users.FirstOrDefault(s => s.ID == id);
         }
+
+        public User? GetUserByRole(string name)
+        {
+            return _context.Users.FirstOrDefault(s => s.UserRole == name); 
+        }
     }
 }

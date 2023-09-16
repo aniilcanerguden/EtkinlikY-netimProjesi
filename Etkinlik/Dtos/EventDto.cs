@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,7 @@ namespace Etkinlik.Dtos
         public int? User { get; set; }
         public string? Description { get; set; }
         public bool IsTicketed { get; set; }
-        public decimal EventPayment { get; set; }
+        public decimal? EventPayment { get; set; }
         public string? CityName { get; set; }
         public string? CategoryName { get; set; }
     }

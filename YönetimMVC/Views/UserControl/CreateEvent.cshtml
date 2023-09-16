@@ -93,6 +93,13 @@
 
         var userToken = localStorage.getItem("access_token");
         $("#btnGonder").click(function () {
+            EventPayment = $("#EventPayment").val();
+            if (EventPayment == "") {
+                EventPayment = 0.0;
+            }
+            else {
+                EventPayment = $("#EventPayment").val();
+            }
             var isTicketed = $("#IsTicketed").is(":checked");
             var vm = {
                 Name: $("#Name").val(),
@@ -103,7 +110,7 @@
                 Address: $("#Address").val(),
                 Description: $("#Description").val(),
                 IsTicketed: isTicketed,
-                EventPayment: $("#EventPayment").val(),
+                EventPayment:EventPayment,
                 CategoryName: $("#categoryName option:selected").text(),
                 CityName: $("#cityName option:selected").text()
             };

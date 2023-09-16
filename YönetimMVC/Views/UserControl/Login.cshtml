@@ -67,39 +67,39 @@
                     if (userToken ) {
                         
                         localStorage.setItem("access_token", userToken);
-                            window.location.href = "/UserControl/EventList";
-
-                        
-
-
-                        //$.ajax({
-                        //    url: "http://localhost:17590/api/User/EventList",
-                        //    type: "GET",
-                        //    headers: headers,
-                        //    success: function (data) {
-                        //        var eventListDiv = $("#eventList");
-                        //        var events = data; // API'den gelen veriler
-
-                        //        // Verileri döngü ile div içerisine ekleyin
-                        //        for (var i = 0; i < events.length; i++) {
-                        //            eventListDiv.append("<p>" + events[i].Name + " - " + "</p>");
-                        //        }
-                        //    },
-                        //    error: function (error) {
-                        //        console.log(error);
-                        //    }
-                        //});
+                        $.ajax({
+                            url: "http://localhost:17590/api/User/GetRoles",
+                            type: "GET",
+                            headers: {
+                                "Authorization": "Bearer " + userToken
+                            },
+                            success: function (userRoles) {
+                                console.log(userRoles)
+                                // userRoles bir dizi rol adı içeriyorsa
+                                if (userRoles) {
+                                    if (userRoles.includes("Admin")) {
+                                        // Redirect admin to admin page
+                                        window.location.href = "/AdminControls/Event";
+                                    } else if (userRoles.includes("User")) {
+                                        // Redirect regular user to user page
+                                        window.location.href = "/UserControl/EventList";
+                                    }
+                                } else {
+                                    // Handle missing or invalid userRoles
+                                    console.error("Invalid or missing userRoles.");
+                                }
+                            },
+                            error: function (xhr, textStatus, errorThrown) {
+                                // Handle error
+                                console.error("GetRoles AJAX error: " + textStatus, errorThrown);
+                            }
+                        });
                     }
-
-                }
+                },
+               
             });
-
         });
     });
-
-    function redirectToEventListPage() {
-
-    }
 </script>
 
 
