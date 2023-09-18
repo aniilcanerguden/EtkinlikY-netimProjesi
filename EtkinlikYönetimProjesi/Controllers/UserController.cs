@@ -48,11 +48,15 @@ namespace EtkinlikYönetimProjesi.Controllers
         {
             
             string hashedPassword = _unitOfwork.User.HashPassword(userLoginDto.Password);
-            var admin = _unitOfwork.User.GetFirstOrDefault(x => x.Email == userLoginDto.Email);
-            //database de sistem ayağa kalkarken oluşan admin password ile hashpassword aynı olmadığından password güncelleme işlemi yapılıp token oluşması için.
-            if (admin.Password != hashedPassword)
+            if(userLoginDto.Email == "admin@gmail.com")
             {
-                _unitOfwork.User.AdminControl(admin, hashedPassword);
+                var admin = _unitOfwork.User.GetFirstOrDefault(x => x.Email == userLoginDto.Email);
+                //database de sistem ayağa kalkarken oluşan admin password ile hashpassword aynı olmadığından password güncelleme işlemi yapılıp token oluşması için.
+                if (admin.Password != hashedPassword)
+                {
+                    _unitOfwork.User.AdminControl(admin, hashedPassword);
+                }
+
             }
 
             // Kullanıcı girişi ve token oluşturma işlemi

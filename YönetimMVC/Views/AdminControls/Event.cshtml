@@ -12,8 +12,8 @@
 <body>
 
     <div class="card-title">
-        <button class="btn btn-primary" id="createEventButton">Category Oluştur</button>
-        <button class="btn btn-primary" id="getUser">Şehir Bilgileri gir</button>
+        <button class="btn btn-primary" id="CategoryCreate">Category Oluştur</button>
+        <button class="btn btn-primary" id="CityCreate">Şehir Bilgileri gir</button>
     </div>
     <div>
         <h2 class="card-title"> Admin Page</h2>
@@ -45,12 +45,11 @@
                 var eventList = userToken;
                 if (Array.isArray(eventList)) {
                     populateEventTable(eventList);
-                    populateEvent(userToken);
-                    populateUser(eventList)
+                    categoryAdd(userToken);
+                    cityAdd(userToken);
                 } else if (eventList.length !== undefined) { // Eğer uzunluğu tanımlıysa (nesne gibi görünüyor)
                     populateEventTable([eventList]);
                     populateEvent([userToken]);// Diziye çevirerek tabloya doldur
-                    populateUser([eventList]);
                 } else {
                     console.error("API'den dönen veri anlaşılamadı.");
                 }
@@ -137,6 +136,20 @@
 
 <script>
  
+    function categoryAdd(events){
+        $("#CategoryCreate").click(function () {
+            var userToken = events;
+            window.location.href = "/AdminControls/Category";
+        });
+        
+    }
+    function cityAdd(events) {
+        $("#CityCreate").click(function () {
+            var userToken = events;
+            window.location.href = "/AdminControls/AddCity";
+        });
+
+    }
     function ApproveEvent(idF) {
         var userToken = localStorage.getItem("access_token");
  

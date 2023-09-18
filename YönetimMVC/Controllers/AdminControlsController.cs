@@ -16,5 +16,13 @@ namespace YönetimMVC.Controllers
         {
             return View();
         }
+        public IActionResult AddCity()
+        {
+            return View();
+        }
+        public IActionResult Category()
+        {
+            return View();
+        }
     }
 }

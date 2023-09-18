@@ -32,7 +32,7 @@ namespace EtkinlikYönetimProjesi.Controllers
        
         [HttpPost]
         [Route("CategoryAdd")]
-        public IActionResult AddCategories([FromBody] CategoryDto categoryDto)
+        public IActionResult CategoryAdd([FromBody] CategoryDto categoryDto)
         {
             if (categoryDto == null)
             {
