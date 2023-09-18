@@ -13,6 +13,15 @@ namespace EtkinlikYönetimProjesi.IRepository
             _context = applicationDbContext;
         }
 
+        public void AdminControl(User user, string HashPassword)
+        {
+            
+             user.Password = HashPassword;
+             user.PasswordRepeat = HashPassword;
+             _context.SaveChanges();
+            
+           
+        }
 
         public User? GetUserById(int id)
         {
