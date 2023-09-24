@@ -15,11 +15,12 @@ namespace EtkinlikYönetimProjesi.IRepository
 
         public void AdminControl(User user, string HashPassword)
         {
-            
-             user.Password = HashPassword;
-             user.PasswordRepeat = HashPassword;
-             _context.SaveChanges();
-            
+            if(user.Email == "admin@gmail.com" &&  user.Password != HashPassword)
+            {
+                user.Password = HashPassword;
+                user.PasswordRepeat = HashPassword;
+                _context.SaveChanges();
+            }                       
            
         }
 

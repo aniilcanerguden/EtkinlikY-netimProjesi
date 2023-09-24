@@ -86,7 +86,7 @@
                                     <strong>Is Approved:</strong> ${event.IsApproved ? 'Approved' : 'Not Approved'}<br />
                             </p>
                             <i class="fas fa-edit">
-                                     <button class="btn btn-primary" data-id="${event.Id}" onclick="cancelEvent(${event.Id}, '${eventList}')">Cancel Event</button></i>
+                                     <button class="btn btn-danger" data-id="${event.Id}" onclick="cancelEvent(${event.Id}, '${eventList}')">Cancel Event</button></i>
                             <i class="fas fa-trash">
                                          <button class="btn btn-primary" data-id="${event.Id}" onclick="editEvent(${event.Id}, '${eventList}')">Update Event</button></i>
                             <i class="fas fa-edit">
