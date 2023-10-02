@@ -5,7 +5,6 @@
 <head>
     <title>Event List</title>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
 </head>
 
 
@@ -21,16 +20,74 @@
     <div id="eventCards" class="card-container">
     </div>
 
-</body>
-</html>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalLabel">Category Oluştur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add your category creation form or content here -->
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="Category">
+                        <label for="floatingInput">Category</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="close" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- Add your category creation button or action here -->
+                    <button id="btnGonder" type="button" class="btn btn-primary">Create Category</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="modal fade" id="cityModal" tabindex="-1" role="dialog" aria-labelledby="cityModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cityModalLabel">City Create </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Add your category creation form or content here -->
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="City">
+                            <label for="floatingInput">City</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button id="closeCity" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <!-- Add your category creation button or action here -->
+                        <button id="btnCity" type="button" class="btn btn-primary">Create City</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+        $("#CategoryCreate").click(function () {    
+            $('#categoryModal').modal('show');         
+        });
+        $("#close").click(function () {
+            $('#categoryModal').modal('hide');
 
+        });
+         $("#CityCreate").click(function () {
+                $('#cityModal').modal('show');
+        });
+        $("#closeCity").click(function () {
+            $('#cityModal').modal('hide');
+        });
     $(document).ready(function () {
 
         var userToken = localStorage.getItem("access_token");
@@ -45,8 +102,8 @@
                 var eventList = userToken;
                 if (Array.isArray(eventList)) {
                     populateEventTable(eventList);
-                    categoryAdd(userToken);
-                    cityAdd(userToken);
+                    //categoryAdd(userToken);
+                    //cityAdd(userToken);
                 } else if (eventList.length !== undefined) { // Eğer uzunluğu tanımlıysa (nesne gibi görünüyor)
                     populateEventTable([eventList]);
                     populateEvent([userToken]);// Diziye çevirerek tabloya doldur
@@ -107,6 +164,70 @@
 
 
 </script>
+    <script>
+        $(document).ready(function () {
+            var userToken = localStorage.getItem("access_token");
+            $("#btnGonder").click(function () {
+
+                var vm = {
+                    Name: $("#Category").val()
+
+                };
+
+                var jss = JSON.stringify(vm);
+                $.ajax({
+                    url: "http://localhost:17590/api/Admin/CategoryAdd",
+                    data: jss,
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "text",
+                    crossDomain: true,
+                    headers: {
+                        'Authorization': 'Bearer ' + userToken
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        localStorage.setItem("access_token", userToken);
+                        window.location.href = "/AdminControls/Event";
+                    },
+                });
+
+            });
+        });
+
+    </script>
+        <script>
+            $(document).ready(function () {
+                var userToken = localStorage.getItem("access_token");
+                $("#btnCity").click(function () {
+
+                    var vm = {
+                        Name: $("#City").val()
+
+                    };
+
+                    var jss = JSON.stringify(vm);
+                    $.ajax({
+                        url: "http://localhost:17590/api/Admin/AddCity",
+                        data: jss,
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "text",
+                        crossDomain: true,
+                        headers: {
+                            'Authorization': 'Bearer ' + userToken
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            localStorage.setItem("access_token", userToken);
+                            window.location.href = "/AdminControls/Event";
+                        },
+                    });
+
+                });
+            });
+
+        </script>
 <style>
     .card {
         width: 380px;
@@ -136,20 +257,20 @@
 
 <script>
  
-    function categoryAdd(events){
-        $("#CategoryCreate").click(function () {
-            var userToken = events;
-            window.location.href = "/AdminControls/Category";
-        });
+    //function categoryAdd(events){
+    //    $("#CategoryCreate").click(function () {
+    //        var userToken = events;
+    //        window.location.href = "/AdminControls/Category";
+    //    });
         
-    }
-    function cityAdd(events) {
-        $("#CityCreate").click(function () {
-            var userToken = events;
-            window.location.href = "/AdminControls/AddCity";
-        });
+    //}
+    //function cityAdd(events) {
+    //    $("#CityCreate").click(function () {
+    //        var userToken = events;
+    //        window.location.href = "/AdminControls/AddCity";
+    //    });
 
-    }
+    //}
     function ApproveEvent(idF) {
         var userToken = localStorage.getItem("access_token");
  
@@ -205,3 +326,6 @@
 
 
 </script>
+
+</body>
+</html>

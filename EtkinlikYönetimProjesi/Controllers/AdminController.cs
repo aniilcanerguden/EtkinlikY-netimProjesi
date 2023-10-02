@@ -32,7 +32,8 @@ namespace EtkinlikYönetimProjesi.Controllers
        
         [HttpPost]
         [Route("CategoryAdd")]
-        public IActionResult CategoryAdd([FromBody] CategoryDto categoryDto)
+        public IActionResult CategoryAdd([FromBody] CategoryDto
+            categoryDto)
         {
             if (categoryDto == null)
             {
@@ -92,11 +93,16 @@ namespace EtkinlikYönetimProjesi.Controllers
             {
                 return BadRequest();
             }
-            City city = new City();
-            city.Name = cityDto.Name;
-            _unitOfwork.City.Add(city);
-            _unitOfwork.Save();        
-            return Created("City added Succefully", city);
+            var cityIsExist = _unitOfwork.City.GetFirstOrDefault(x=> x.Name == cityDto.Name);
+            if(cityIsExist == null)
+            {
+                City city = new City();
+                city.Name = cityDto.Name;
+                _unitOfwork.City.Add(city);
+                _unitOfwork.Save();
+                return Created("City added Succefully", city);
+            }
+            return BadRequest("City exist");
         }
         [HttpGet]
         [Route("GetEvents")]
